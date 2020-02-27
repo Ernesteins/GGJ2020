@@ -1,0 +1,120 @@
+using UnityEngine;
+using System.Collections.Generic;
+using System.Collections;
+
+public class HoldItems : MonoBehaviour
+{
+    //[SerializeField]
+    public float speed = 10;
+    public bool CanPickUp = false;
+
+    public bool canHold = true;
+    public GameObject ball;
+    public Collider range;
+    public Transform guide;
+
+
+
+    void Start()
+    {
+        range = gameObject.GetComponent<Collider>();
+    }
+
+    void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+
+            if (!canHold)
+                throw_drop();
+            else
+                Pickup();
+
+        }//mause If
+        if (Input.GetMouseButtonUp(0))
+        {
+            throw_drop();
+        }
+        /*
+        if (!canHold && ball) {
+           //guide.position
+            ball.transform.position =  guide.position;// reference.transform.position;
+         
+        }
+          */
+
+    }//update
+
+
+    //We can use trigger or Collision
+    // void OnTriggerEnter(Collider col)
+    // {
+    // if (col.gameObject.tag == "ball")
+    //  if (!ball) // if we don't have anything holding
+    //  ball = col.gameObject;
+    //  }
+
+    //We can use trigger or Collision
+    //void OnTriggerExit(Collider col)
+    // {
+    //  if (col.gameObject.tag == "ball")
+    //  {
+    //      if (canHold)
+    //         ball = null;
+    // }
+    //  }
+
+
+    private void Pickup()
+    {
+
+        //We set the object parent to our guide empty object.
+        if (ball == null)
+            return;
+        ball.transform.SetParent(guide);
+
+        //Set gravity to false while holding it
+        //ball.GetComponent<Rigidbody>().useGravity = false;
+        //we apply the same rotation our main object (Camera) has.
+        ball.transform.localRotation = transform.rotation;
+        //We re-position the ball on our guide object 
+        ball.transform.position = guide.position;
+
+
+        canHold = false;
+    }
+
+    public void throw_drop()
+    {
+
+        //Set our Gravity to true again.
+        //ball.GetComponent<Rigidbody>().useGravity = true;
+        // we don't have anything to do with our ball field anymore
+        //Apply velocity on throwing
+        //guide.GetChild(0).gameObject.GetComponent<Rigidbody>().velocity = transform.forward * speed;
+
+        //Unparent our ball
+        
+        guide.GetChild(0).parent = null;
+        canHold = true;
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("object"))
+        {
+            ball = other.gameObject;
+        }
+        else
+        {
+            ball = null;
+        }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        {
+
+            ball = null;
+
+        }
+    }
+}
